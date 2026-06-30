@@ -9,7 +9,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:services="clr-namespace:VintageStoryModManager.Services"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:viewModels="clr-namespace:VintageStoryModManager.ViewModels"
     xmlns:views="clr-namespace:VintageStoryModManager.Views"
     x:Name="MainWindowRoot"
@@ -685,7 +684,7 @@
                                     Padding="3,3,6,3"
                                     HorizontalAlignment="Left"
                                     VerticalContentAlignment="Center"
-                                    ui:ControlHelper.PlaceholderText="Search installed mods"
+                                    Watermark="Search installed mods"
                                     FontSize="14"
                                     Grid.IsSharedSizeScope="True"
                                     Style="{StaticResource IMM.SearchTextBoxStyle}"
@@ -718,7 +717,7 @@
 
                                 <DataGrid
                                     x:Name="ModsDataGrid"
-                                    ui:ControlHelper.CornerRadius="0"
+                                    CornerRadius="0"
                                     AreRowDetailsFrozen="True"
                                     AutoGenerateColumns="False"
                                     Background="Transparent"
@@ -802,7 +801,7 @@
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <Grid HorizontalAlignment="Center">
-                                                        <ui:ToggleSwitch
+                                                        <ToggleSwitch
                                                             Margin="12,0"
                                                             HorizontalAlignment="Center"
                                                             IsOn="{Binding IsActive, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -812,12 +811,12 @@
                                                             PreviewMouseLeftButtonUp="ActiveToggle_OnPreviewMouseLeftButtonUp"
                                                             PreviewMouseMove="ActiveToggle_OnPreviewMouseMove"
                                                             Toggled="ActiveToggle_OnToggled">
-                                                            <ui:ToggleSwitch.Style>
-                                                                <Style BasedOn="{StaticResource IMM.ToggleSwitchBaseStyle}" TargetType="{x:Type ui:ToggleSwitch}">
+                                                            <ToggleSwitch.Style>
+                                                                <Style BasedOn="{StaticResource IMM.ToggleSwitchBaseStyle}" TargetType="{x:Type ToggleSwitch}">
                                                                     <Setter Property="IsEnabled" Value="{Binding CanToggle}" />
                                                                 </Style>
-                                                            </ui:ToggleSwitch.Style>
-                                                        </ui:ToggleSwitch>
+                                                            </ToggleSwitch.Style>
+                                                        </ToggleSwitch>
                                                     </Grid>
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>
@@ -1325,7 +1324,7 @@
                                         <DataGrid
                                             x:Name="LocalModlistsDataGrid"
                                             Margin="8,0,8,0"
-                                            ui:ControlHelper.CornerRadius="0"
+                                            CornerRadius="0"
                                             AutoGenerateColumns="False"
                                             Background="{DynamicResource Brush.Panel.Secondary.Background.Solid}"
                                             BorderBrush="{DynamicResource Brush.MiddleTab.ModTab.Selected}"
@@ -1611,7 +1610,7 @@
                                         <DataGrid
                                             x:Name="CloudModlistsDataGrid"
                                             Margin="8,0,8,0"
-                                            ui:ControlHelper.CornerRadius="0"
+                                            CornerRadius="0"
                                             AutoGenerateColumns="False"
                                             Background="{DynamicResource Brush.Panel.Secondary.Background.Solid}"
                                             BorderBrush="{DynamicResource Brush.MiddleTab.ModTab.Selected}"
@@ -1884,7 +1883,7 @@
                                 VerticalAlignment="Top"
                                 VerticalContentAlignment="Center"
                                 Panel.ZIndex="1"
-                                ui:ControlHelper.PlaceholderText="Search modlists..."
+                                Watermark="Search modlists..."
                                 FontSize="14"
                                 Style="{StaticResource IMM.SearchTextBoxStyle}"
                                 Text="{Binding ModlistSearchText, UpdateSourceTrigger=PropertyChanged}"
@@ -2125,7 +2124,7 @@
             </StackPanel>
 
             <!--  Loading Progress Ring  -->
-            <ui:ProgressRing
+            <ProgressRing
                 Grid.Column="1"
                 Width="32"
                 Margin="0,10,10,54"
@@ -2133,8 +2132,8 @@
                 VerticalAlignment="Stretch"
                 Foreground="{DynamicResource Brush.Accent.Primary}"
                 IsActive="{Binding IsBusy}">
-                <ui:ProgressRing.Style>
-                    <Style TargetType="{x:Type ui:ProgressRing}">
+                <ProgressRing.Style>
+                    <Style TargetType="{x:Type ProgressRing}">
                         <Setter Property="Visibility" Value="Visible" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsBusy}" Value="False">
@@ -2148,8 +2147,8 @@
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
-                </ui:ProgressRing.Style>
-            </ui:ProgressRing>
+                </ProgressRing.Style>
+            </ProgressRing>
         </Grid>
 
         <!--  ============================================================  -->
@@ -2353,7 +2352,7 @@
                                                     Background="{TemplateBinding Background}"
                                                     BorderBrush="{TemplateBinding BorderBrush}"
                                                     BorderThickness="{TemplateBinding BorderThickness}"
-                                                    CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius}"
+                                                    CornerRadius="{TemplateBinding CornerRadius}"
                                                     SnapsToDevicePixels="True">
                                                     <ContentPresenter
                                                         HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -2408,7 +2407,7 @@
                         Padding="12,6"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        ui:ControlHelper.CornerRadius="6"
+                        CornerRadius="6"
                         Background="{DynamicResource Brush.ComboBox.Background.Normal}"
                         BorderBrush="{DynamicResource Brush.ComboBox.Border.Normal}"
                         BorderThickness="1"
