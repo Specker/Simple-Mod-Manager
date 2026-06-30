@@ -39,23 +39,23 @@ The Windows build must continue to work unchanged throughout the migration.
 
 ---
 
-## Phase 1 — Project Configuration ⬜
+## Phase 1 — Project Configuration ✅
 
 Goal: Make the project buildable for both `linux-x64` and `win-x64` without breaking either.
 
-- ⬜ **1.1** Change the primary `TargetFramework` from `net8.0-windows` to `net8.0`; keep a conditional
+- ✅ **1.1** Change the primary `TargetFramework` from `net8.0-windows` to `net8.0`; keep a conditional
   `net8.0-windows` TFM for WPF-specific code until the Avalonia migration is complete.
-- ⬜ **1.2** Add `linux-x64` to the list of recognised `RuntimeIdentifier` values.
-- ⬜ **1.3** Move `UseWPF`, `UseWindowsForms`, `EnableWindowsTargeting`, and `ApplicationManifest`
+- ✅ **1.2** Add `linux-x64` to the list of recognised `RuntimeIdentifier` values.
+- ✅ **1.3** Move `UseWPF`, `UseWindowsForms`, `EnableWindowsTargeting`, and `ApplicationManifest`
   into a `Condition="'$(OS)'=='Windows_NT'"` (or `IsWindows`) property group so they are
   only set on Windows builds.
-- ⬜ **1.4** Add Avalonia NuGet packages:
+- ✅ **1.4** Add Avalonia NuGet packages:
   - `Avalonia` (LTS line)
   - `Avalonia.Desktop`
   - `FluentAvalonia`
   - `Avalonia.ReactiveUI` or keep `CommunityToolkit.Mvvm` (Avalonia supports both)
-- ⬜ **1.5** Keep WPF/WinForms packages conditional on Windows builds.
-- ⬜ **1.6** Verify `dotnet restore` succeeds on Linux with `--runtime linux-x64`.
+- ✅ **1.5** Keep WPF/WinForms packages conditional on Windows builds.
+- ✅ **1.6** Verify `dotnet restore` succeeds on Linux with `--runtime linux-x64`.
 
 ---
 
