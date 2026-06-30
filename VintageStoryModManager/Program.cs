@@ -1,4 +1,4 @@
-#if NET8_0 && !NET8_0_WINDOWS
+#if !WINDOWS
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
