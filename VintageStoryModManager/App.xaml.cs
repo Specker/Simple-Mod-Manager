@@ -1,3 +1,4 @@
+#if WINDOWS
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -28,7 +29,6 @@ public partial class App : Application
         DispatcherUnhandledException += OnDispatcherUnhandledException;
         AppDomain.CurrentDomain.FirstChanceException += OnFirstChanceException;
     }
-
     protected override void OnStartup(StartupEventArgs e)
     {
         bool createdNew;
@@ -65,7 +65,6 @@ public partial class App : Application
             _ownsMutex = false;
         }
     }
-
     private static void OnFirstChanceException(object? sender, FirstChanceExceptionEventArgs e)
     {
         if (e.Exception is not InvalidOperationException)
@@ -306,3 +305,4 @@ public partial class App : Application
         }
     }
 }
+#endif

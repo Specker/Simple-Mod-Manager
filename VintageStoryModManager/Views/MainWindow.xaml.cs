@@ -7661,14 +7661,9 @@ public partial class MainWindow : Window
     private static bool EnsurePermanentDeleteConfirmedForCurrentPlatform()
     {
         if (!OperatingSystem.IsLinux()) return true;
-
-        var confirmation = WpfMessageBox.Show(
+        return CrossPlatformConfirmationDialogService.ShowYesNoWarning(
             "This will permanently delete manager files and folders. Continue?",
-            "Simple VS Manager",
-            MessageBoxButton.YesNo,
-            MessageBoxImage.Warning);
-
-        return confirmation == MessageBoxResult.Yes;
+            "Simple VS Manager");
     }
 
     private static void DeleteFileCrossPlatform(string path)

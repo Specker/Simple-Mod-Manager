@@ -1,6 +1,4 @@
 using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Markup.Xaml;
 
 namespace VintageStoryModManager;
 
@@ -15,33 +13,9 @@ public static class Program
 
     public static AppBuilder BuildAvaloniaApp()
     {
-        return AppBuilder.Configure<AvaloniaBootstrapApp>()
+        return AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace();
-    }
-}
-
-public sealed class AvaloniaBootstrapApp : Application
-{
-    public override void Initialize()
-    {
-        AvaloniaXamlLoader.Load(this);
-    }
-
-    public override void OnFrameworkInitializationCompleted()
-    {
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
-            desktop.MainWindow ??= new Window
-            {
-                Title = "Simple VS Manager",
-                Width = 1280,
-                Height = 800
-            };
-        }
-
-        base.OnFrameworkInitializationCompleted();
     }
 }

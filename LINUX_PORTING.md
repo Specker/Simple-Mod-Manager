@@ -95,7 +95,7 @@ Per the project brief, "Confirmation-then-permanent-delete is acceptable" on Lin
 - ✅ **2.2.2** On Windows the helper continues to use `FileSystem.DeleteFile(…, SendToRecycleBin)`.
 - ✅ **2.2.3** On Linux the helper shows a confirmation dialog ("This will permanently delete the file.
   Continue?") and, if confirmed, calls `File.Delete(path)` or `Directory.Delete(path, recursive: true)`.
-- ⬜ **2.2.4** Confirmation dialog must be an Avalonia-compatible dialog (not WPF `MessageBox`).
+- ✅ **2.2.4** Confirmation dialog now routes through a cross-platform dialog service with an Avalonia path.
 
 ### 2.3 — Single-Instance Mutex ⬜
 
@@ -153,7 +153,7 @@ Avalonia XAML syntax is very close to WPF but with these key differences:
 
 ### 3.1 — Application Bootstrap 🔄
 
-- 🔄 **3.1.1** Create `Program.cs` as the Avalonia entry point:
+- ✅ **3.1.1** Create `Program.cs` as the Avalonia entry point:
   ```csharp
   AppBuilder.Configure<App>()
       .UsePlatformDetect()
