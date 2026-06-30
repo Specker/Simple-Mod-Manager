@@ -7621,7 +7621,6 @@ public partial class MainWindow : Window
 
         if (!canDelete)
         {
-            failedPaths.Add("Deletion cancelled by user.");
             return new ManagerDeletionResult(deletedPaths, failedPaths);
         }
 
