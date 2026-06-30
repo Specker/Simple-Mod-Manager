@@ -1,4 +1,3 @@
-#if !WINDOWS
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -39,4 +38,3 @@ public sealed class AvaloniaBootstrapApp : Application
         base.OnFrameworkInitializationCompleted();
     }
 }
-#endif
