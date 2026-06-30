@@ -1,6 +1,8 @@
+#if WINDOWS
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Windows;
 using System.Windows.Threading;
 using System.Runtime.ExceptionServices;
@@ -27,7 +29,6 @@ public partial class App : Application
         DispatcherUnhandledException += OnDispatcherUnhandledException;
         AppDomain.CurrentDomain.FirstChanceException += OnFirstChanceException;
     }
-
     protected override void OnStartup(StartupEventArgs e)
     {
         bool createdNew;
@@ -37,7 +38,10 @@ public partial class App : Application
         if (!createdNew)
         {
             ShowSingleInstanceWarning();
-            ActivateExistingInstance();
+            if (OperatingSystem.IsWindows())
+            {
+                ActivateExistingInstance();
+            }
             Current?.Shutdown();
             return;
         }
@@ -61,7 +65,6 @@ public partial class App : Application
             _ownsMutex = false;
         }
     }
-
     private static void OnFirstChanceException(object? sender, FirstChanceExceptionEventArgs e)
     {
         if (e.Exception is not InvalidOperationException)
@@ -282,6 +285,7 @@ public partial class App : Application
         return byte.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value);
     }
 
+    [SupportedOSPlatform("windows")]
     private static class WindowActivator
     {
         private const int SwRestore = 9;
@@ -301,3 +305,4 @@ public partial class App : Application
         }
     }
 }
+#endif

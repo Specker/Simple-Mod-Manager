@@ -7617,13 +7617,19 @@ public partial class MainWindow : Window
 
         var deletedPaths = new List<string>();
         var failedPaths = new List<string>();
+        var canDelete = EnsurePermanentDeleteConfirmedForCurrentPlatform();
+
+        if (!canDelete)
+        {
+            return new ManagerDeletionResult(deletedPaths, failedPaths);
+        }
 
         foreach (var file in fileCandidates)
             try
             {
                 if (!File.Exists(file)) continue;
 
-                FileSystem.DeleteFile(file, FileUIOption.OnlyErrorDialogs, FileRecycleOption.SendToRecycleBin);
+                DeleteFileCrossPlatform(file);
                 deletedPaths.Add(file);
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or NotSupportedException
@@ -7637,8 +7643,7 @@ public partial class MainWindow : Window
             {
                 if (!Directory.Exists(directory)) continue;
 
-                FileSystem.DeleteDirectory(directory, FileUIOption.OnlyErrorDialogs,
-                    FileRecycleOption.SendToRecycleBin);
+                DeleteDirectoryCrossPlatform(directory);
                 deletedPaths.Add(directory);
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or NotSupportedException
@@ -7651,6 +7656,36 @@ public partial class MainWindow : Window
         failedPaths.Sort(StringComparer.OrdinalIgnoreCase);
 
         return new ManagerDeletionResult(deletedPaths, failedPaths);
+    }
+
+    private static bool EnsurePermanentDeleteConfirmedForCurrentPlatform()
+    {
+        if (!OperatingSystem.IsLinux()) return true;
+        return CrossPlatformConfirmationDialogService.ShowYesNoWarning(
+            "This will permanently delete manager files and folders. Continue?",
+            "Simple VS Manager");
+    }
+
+    private static void DeleteFileCrossPlatform(string path)
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            FileSystem.DeleteFile(path, FileUIOption.OnlyErrorDialogs, FileRecycleOption.SendToRecycleBin);
+            return;
+        }
+
+        File.Delete(path);
+    }
+
+    private static void DeleteDirectoryCrossPlatform(string path)
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            FileSystem.DeleteDirectory(path, FileUIOption.OnlyErrorDialogs, FileRecycleOption.SendToRecycleBin);
+            return;
+        }
+
+        Directory.Delete(path, recursive: true);
     }
 
     private static void AddCandidateDirectory(ISet<string> directories, string? path)
@@ -8185,11 +8220,7 @@ public partial class MainWindow : Window
 
             try
             {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = _customShortcutPath,
-                    UseShellExecute = true
-                });
+                LaunchCustomShortcutCrossPlatform(_customShortcutPath);
             }
             catch (Exception ex)
             {
@@ -8265,7 +8296,7 @@ public partial class MainWindow : Window
         using var dialog = new WinForms.OpenFileDialog
         {
             Title = "Select Vintage Story shortcut",
-            Filter = "Shortcut files (*.lnk)|*.lnk|All files (*.*)|*.*",
+            Filter = GetCustomShortcutFileFilter(),
             CheckFileExists = true,
             Multiselect = false,
             RestoreDirectory = true
@@ -8319,6 +8350,38 @@ public partial class MainWindow : Window
 
         _userConfiguration.ClearCustomShortcutPath();
         _customShortcutPath = null;
+    }
+
+    private static string GetCustomShortcutFileFilter()
+    {
+        if (OperatingSystem.IsWindows())
+            return "Shortcut files (*.lnk;*.exe)|*.lnk;*.exe|All files (*.*)|*.*";
+
+        if (OperatingSystem.IsLinux())
+            return "Launch scripts and binaries (*.sh;Vintagestory;Vintagestory.sh;vintagestory.sh)|*.sh;Vintagestory;Vintagestory.sh;vintagestory.sh|All files (*.*)|*.*";
+
+        return "All files (*.*)|*.*";
+    }
+
+    private static void LaunchCustomShortcutCrossPlatform(string shortcutPath)
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = shortcutPath,
+                UseShellExecute = true
+            });
+            return;
+        }
+
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = shortcutPath,
+            WorkingDirectory = Path.GetDirectoryName(shortcutPath) ?? string.Empty,
+            UseShellExecute = false
+        };
+        Process.Start(startInfo);
     }
 
     private void RestoreDataFolderMenuItem_OnSubmenuOpened(object sender, RoutedEventArgs e)
@@ -8981,6 +9044,18 @@ public partial class MainWindow : Window
             };
             explorerStartInfo.ArgumentList.Add(path);
             Process.Start(explorerStartInfo);
+            return;
+        }
+
+        if (OperatingSystem.IsLinux())
+        {
+            var xdgOpenStartInfo = new ProcessStartInfo
+            {
+                FileName = "xdg-open",
+                UseShellExecute = false
+            };
+            xdgOpenStartInfo.ArgumentList.Add(path);
+            Process.Start(xdgOpenStartInfo);
             return;
         }
 

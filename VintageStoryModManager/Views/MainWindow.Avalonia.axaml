@@ -1,0 +1,17 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="VintageStoryModManager.Views.MainWindow"
+        Width="1280"
+        Height="800"
+        MinWidth="1024"
+        MinHeight="720"
+        Title="Simple VS Manager">
+  <Grid Margin="20" RowDefinitions="Auto,*" RowSpacing="12">
+    <TextBlock Text="Simple VS Manager"
+               FontSize="28"
+               FontWeight="Bold" />
+    <TextBlock Grid.Row="1"
+               TextWrapping="Wrap"
+               Text="Avalonia migration bootstrap is active for Linux builds. The full Phase 3 UI parity migration remains pending." />
+  </Grid>
+</Window>

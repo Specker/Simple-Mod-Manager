@@ -11,6 +11,7 @@ public static class GameDirectoryLocator
     {
         "Vintagestory.exe",
         "Vintagestory",
+        "vintagestory.sh",
         Path.Combine("Vintagestory.app", "Contents", "MacOS", "Vintagestory")
     };
 
@@ -72,6 +73,9 @@ public static class GameDirectoryLocator
 
     private static IEnumerable<string> EnumerateDefaultInstallPaths()
     {
+        foreach (var linuxPath in EnumerateLinuxInstallPaths())
+            yield return linuxPath;
+
         foreach (var folder in new[]
                  {
                      Environment.SpecialFolder.ProgramFiles,
@@ -133,6 +137,8 @@ public static class GameDirectoryLocator
 
     private static IEnumerable<string> EnumerateAdditionalWindowsRoots()
     {
+        if (!OperatingSystem.IsWindows()) yield break;
+
         foreach (var root in new[]
                  {
                      @"C:\\Games",
@@ -143,6 +149,53 @@ public static class GameDirectoryLocator
         {
             var normalized = TryNormalize(root);
             if (!string.IsNullOrWhiteSpace(normalized)) yield return normalized!;
+        }
+    }
+
+    private static IEnumerable<string> EnumerateLinuxInstallPaths()
+    {
+        if (!OperatingSystem.IsLinux()) yield break;
+
+        var home = GetHomeDirectory();
+        if (string.IsNullOrWhiteSpace(home)) yield break;
+
+        var xdgDataHome = Environment.GetEnvironmentVariable("XDG_DATA_HOME");
+        var dataHome = !string.IsNullOrWhiteSpace(xdgDataHome)
+            ? xdgDataHome
+            : TryCombine(home, ".local/share");
+
+        foreach (var path in new[]
+                 {
+                     TryCombine(dataHome, "vintagestory"),
+                     TryCombine(home, "games/vintagestory"),
+                     "/opt/vintagestory",
+                     TryCombine(dataHome, "Steam/steamapps/common/Vintage Story"),
+                     TryCombine(home, ".steam/steam/steamapps/common/Vintage Story")
+                 })
+        {
+            if (!string.IsNullOrWhiteSpace(path)) yield return path!;
+        }
+    }
+
+    private static string? GetHomeDirectory()
+    {
+        var fromEnvironment = Environment.GetEnvironmentVariable("HOME");
+        if (!string.IsNullOrWhiteSpace(fromEnvironment)) return fromEnvironment;
+
+        return TryGetFolder(Environment.SpecialFolder.UserProfile);
+    }
+
+    private static string? TryCombine(string? basePath, string relativePath)
+    {
+        if (string.IsNullOrWhiteSpace(basePath)) return null;
+
+        try
+        {
+            return Path.GetFullPath(Path.Combine(basePath, relativePath));
+        }
+        catch (Exception)
+        {
+            return null;
         }
     }
 }
