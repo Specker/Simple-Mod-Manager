@@ -9024,6 +9024,18 @@ public partial class MainWindow : Window
             return;
         }
 
+        if (OperatingSystem.IsLinux())
+        {
+            var xdgOpenStartInfo = new ProcessStartInfo
+            {
+                FileName = "xdg-open",
+                UseShellExecute = false
+            };
+            xdgOpenStartInfo.ArgumentList.Add(path);
+            Process.Start(xdgOpenStartInfo);
+            return;
+        }
+
         Process.Start(new ProcessStartInfo
         {
             FileName = path,

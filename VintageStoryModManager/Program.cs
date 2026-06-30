@@ -17,6 +17,7 @@ public static class Program
     {
         return AppBuilder.Configure<AvaloniaBootstrapApp>()
             .UsePlatformDetect()
+            .WithInterFont()
             .LogToTrace();
     }
 }

@@ -110,11 +110,11 @@ Per the project brief, "Confirmation-then-permanent-delete is acceptable" on Lin
 
 ### 2.4 — Process / Shell Launching ⬜
 
-- ⬜ **2.4.1** `OpenFolderWithShell` already has the Windows branch correct. Verify the Linux fallback
+- ✅ **2.4.1** `OpenFolderWithShell` already has the Windows branch correct. Verify the Linux fallback
   (`UseShellExecute = true` with a directory path) works via `xdg-open` on common distros.
 - ⬜ **2.4.2** Audit all other `Process.Start` call-sites for Windows-only assumptions
   (e.g. launching the game with `.exe`).
-- ⬜ **2.4.3** On Linux, game launch should call the `Vintagestory` binary (or wrapper script) directly.
+- ✅ **2.4.3** On Linux, game launch should call the `Vintagestory` binary (or wrapper script) directly.
 
 ### 2.5 — Configuration & App Data Paths ⬜
 
