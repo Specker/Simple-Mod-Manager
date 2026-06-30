@@ -80,7 +80,16 @@
 
 	<ItemGroup Condition="'$(TargetFramework)'=='net8.0-windows'">
 		<Compile Remove="Program.cs" />
+		<AvaloniaXaml Remove="App.axaml" />
+		<AvaloniaXaml Remove="Views\MainWindow.Avalonia.axaml" />
 		<PackageReference Include="ModernWpfUI" Version="0.9.6" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)'=='net8.0'">
+		<Compile Remove="**\*.cs" />
+		<Compile Include="Program.cs" />
+		<Compile Include="App.Avalonia.cs" />
+		<Compile Include="Views\MainWindow.Avalonia.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

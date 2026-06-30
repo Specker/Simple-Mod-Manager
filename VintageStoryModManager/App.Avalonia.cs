@@ -2,9 +2,9 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Styling;
+using Avalonia.Markup.Xaml;
 using System.Diagnostics;
-using System.IO;
+using VintageStoryModManager.Views;
 
 namespace VintageStoryModManager;
 
@@ -12,7 +12,7 @@ public partial class App : Application
 {
     public override void Initialize()
     {
-        RequestedThemeVariant = ThemeVariant.Dark;
+        AvaloniaXamlLoader.Load(this);
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -22,12 +22,7 @@ public partial class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
-            desktop.MainWindow ??= new Window
-            {
-                Title = "Simple VS Manager",
-                Width = 1280,
-                Height = 800
-            };
+            desktop.MainWindow ??= new MainWindow();
         }
 
         base.OnFrameworkInitializationCompleted();
