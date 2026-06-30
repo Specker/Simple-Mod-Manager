@@ -8358,7 +8358,7 @@ public partial class MainWindow : Window
             return "Shortcut files (*.lnk;*.exe)|*.lnk;*.exe|All files (*.*)|*.*";
 
         if (OperatingSystem.IsLinux())
-            return "Launch scripts and binaries (*.sh;Vintagestory)|*.sh;Vintagestory|All files (*.*)|*.*";
+            return "Launch scripts and binaries (*.sh;Vintagestory;vintagestory.sh)|*.sh;Vintagestory;vintagestory.sh|All files (*.*)|*.*";
 
         return "All files (*.*)|*.*";
     }
