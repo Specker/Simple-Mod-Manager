@@ -86,10 +86,10 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)'=='net8.0'">
-		<Compile Remove="**\*.cs" />
+		<Compile Remove="**/*.cs" />
 		<Compile Include="Program.cs" />
 		<Compile Include="App.Avalonia.cs" />
-		<Compile Include="Views\MainWindow.Avalonia.cs" />
+		<Compile Include="Views/MainWindow.Avalonia.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

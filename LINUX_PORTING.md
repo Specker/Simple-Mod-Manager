@@ -161,12 +161,12 @@ Avalonia XAML syntax is very close to WPF but with these key differences:
       .LogToTrace()
       .StartWithClassicDesktopLifetime(args);
   ```
-- ⬜ **3.1.2** Rewrite `App.xaml` / `App.xaml.cs`:
+- 🔄 **3.1.2** Rewrite `App.xaml` / `App.xaml.cs`:
   - Remove WPF `Application` base, use Avalonia `Application`.
   - Move theme loading to Avalonia `RequestedThemeVariant` / `Styles`.
   - Remove `DispatcherUnhandledException` (use Avalonia's equivalent).
   - Guard `WindowActivator` (user32 P/Invoke) with `OperatingSystem.IsWindows()`.
-- ⬜ **3.1.3** Replace `ModernWpfUI` theme with `FluentAvalonia`.
+- 🔄 **3.1.3** Replace `ModernWpfUI` theme with `FluentAvalonia`.
   Reproduce the existing `DarkVsTheme.xaml` colour palette as an Avalonia `ResourceDictionary`.
 
 ### 3.2 — Main Window ⬜
