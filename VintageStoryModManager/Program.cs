@@ -34,6 +34,12 @@ public sealed class AvaloniaBootstrapApp : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
+            desktop.MainWindow ??= new Window
+            {
+                Title = "Simple VS Manager",
+                Width = 1280,
+                Height = 800
+            };
         }
 
         base.OnFrameworkInitializationCompleted();
