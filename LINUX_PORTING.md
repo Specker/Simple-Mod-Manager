@@ -59,7 +59,7 @@ Goal: Make the project buildable for both `linux-x64` and `win-x64` without brea
 
 ---
 
-## Phase 2 — Cross-Platform Backend Fixes 🔄
+## Phase 2 — Cross-Platform Backend Fixes ✅
 
 These are pure C# changes with no UI involvement. They can be done before or in parallel with the
 Avalonia migration.
@@ -112,7 +112,7 @@ Per the project brief, "Confirmation-then-permanent-delete is acceptable" on Lin
 
 - ✅ **2.4.1** `OpenFolderWithShell` already has the Windows branch correct. Verify the Linux fallback
   (`UseShellExecute = true` with a directory path) works via `xdg-open` on common distros.
-- ⬜ **2.4.2** Audit all other `Process.Start` call-sites for Windows-only assumptions
+- ✅ **2.4.2** Audit all other `Process.Start` call-sites for Windows-only assumptions
   (e.g. launching the game with `.exe`).
 - ✅ **2.4.3** On Linux, game launch should call the `Vintagestory` binary (or wrapper script) directly.
 
@@ -122,9 +122,9 @@ Per the project brief, "Confirmation-then-permanent-delete is acceptable" on Lin
 On Linux this maps to `~/.local/share` via .NET's cross-platform implementation — which is correct.
 No changes are needed here, but verify:
 
-- ⬜ **2.5.1** Confirm `Environment.SpecialFolder.LocalApplicationData` returns `~/.local/share` on Linux.
-- ⬜ **2.5.2** Confirm `Environment.SpecialFolder.ApplicationData` returns `~/.config` on Linux.
-- ⬜ **2.5.3** Ensure config/cache files written under these directories use `/` as path separator
+- ✅ **2.5.1** Confirm `Environment.SpecialFolder.LocalApplicationData` returns `~/.local/share` on Linux.
+- ✅ **2.5.2** Confirm `Environment.SpecialFolder.ApplicationData` returns `~/.config` on Linux.
+- ✅ **2.5.3** Ensure config/cache files written under these directories use `/` as path separator
   (already guaranteed by `Path.Combine`).
 
 ---

@@ -8220,11 +8220,7 @@ public partial class MainWindow : Window
 
             try
             {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = _customShortcutPath,
-                    UseShellExecute = true
-                });
+                LaunchCustomShortcutCrossPlatform(_customShortcutPath);
             }
             catch (Exception ex)
             {
@@ -8300,7 +8296,7 @@ public partial class MainWindow : Window
         using var dialog = new WinForms.OpenFileDialog
         {
             Title = "Select Vintage Story shortcut",
-            Filter = "Shortcut files (*.lnk)|*.lnk|All files (*.*)|*.*",
+            Filter = GetCustomShortcutFileFilter(),
             CheckFileExists = true,
             Multiselect = false,
             RestoreDirectory = true
@@ -8354,6 +8350,38 @@ public partial class MainWindow : Window
 
         _userConfiguration.ClearCustomShortcutPath();
         _customShortcutPath = null;
+    }
+
+    private static string GetCustomShortcutFileFilter()
+    {
+        if (OperatingSystem.IsWindows())
+            return "Shortcut files (*.lnk;*.exe)|*.lnk;*.exe|All files (*.*)|*.*";
+
+        if (OperatingSystem.IsLinux())
+            return "Launch scripts and binaries (*.sh;Vintagestory)|*.sh;Vintagestory|All files (*.*)|*.*";
+
+        return "All files (*.*)|*.*";
+    }
+
+    private static void LaunchCustomShortcutCrossPlatform(string shortcutPath)
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = shortcutPath,
+                UseShellExecute = true
+            });
+            return;
+        }
+
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = shortcutPath,
+            WorkingDirectory = Path.GetDirectoryName(shortcutPath) ?? string.Empty,
+            UseShellExecute = false
+        };
+        Process.Start(startInfo);
     }
 
     private void RestoreDataFolderMenuItem_OnSubmenuOpened(object sender, RoutedEventArgs e)
