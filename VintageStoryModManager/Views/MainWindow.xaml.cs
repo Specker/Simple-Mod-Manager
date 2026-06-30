@@ -7617,13 +7617,20 @@ public partial class MainWindow : Window
 
         var deletedPaths = new List<string>();
         var failedPaths = new List<string>();
+        var canDelete = EnsurePermanentDeleteConfirmedForCurrentPlatform();
+
+        if (!canDelete)
+        {
+            failedPaths.Add("Deletion cancelled by user.");
+            return new ManagerDeletionResult(deletedPaths, failedPaths);
+        }
 
         foreach (var file in fileCandidates)
             try
             {
                 if (!File.Exists(file)) continue;
 
-                FileSystem.DeleteFile(file, FileUIOption.OnlyErrorDialogs, FileRecycleOption.SendToRecycleBin);
+                DeleteFileCrossPlatform(file);
                 deletedPaths.Add(file);
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or NotSupportedException
@@ -7637,8 +7644,7 @@ public partial class MainWindow : Window
             {
                 if (!Directory.Exists(directory)) continue;
 
-                FileSystem.DeleteDirectory(directory, FileUIOption.OnlyErrorDialogs,
-                    FileRecycleOption.SendToRecycleBin);
+                DeleteDirectoryCrossPlatform(directory);
                 deletedPaths.Add(directory);
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or NotSupportedException
@@ -7651,6 +7657,41 @@ public partial class MainWindow : Window
         failedPaths.Sort(StringComparer.OrdinalIgnoreCase);
 
         return new ManagerDeletionResult(deletedPaths, failedPaths);
+    }
+
+    private static bool EnsurePermanentDeleteConfirmedForCurrentPlatform()
+    {
+        if (!OperatingSystem.IsLinux()) return true;
+
+        var confirmation = WpfMessageBox.Show(
+            "This will permanently delete manager files and folders. Continue?",
+            "Simple VS Manager",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+
+        return confirmation == MessageBoxResult.Yes;
+    }
+
+    private static void DeleteFileCrossPlatform(string path)
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            FileSystem.DeleteFile(path, FileUIOption.OnlyErrorDialogs, FileRecycleOption.SendToRecycleBin);
+            return;
+        }
+
+        File.Delete(path);
+    }
+
+    private static void DeleteDirectoryCrossPlatform(string path)
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            FileSystem.DeleteDirectory(path, FileUIOption.OnlyErrorDialogs, FileRecycleOption.SendToRecycleBin);
+            return;
+        }
+
+        Directory.Delete(path, recursive: true);
     }
 
     private static void AddCandidateDirectory(ISet<string> directories, string? path)

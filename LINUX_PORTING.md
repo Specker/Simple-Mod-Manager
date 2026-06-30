@@ -59,7 +59,7 @@ Goal: Make the project buildable for both `linux-x64` and `win-x64` without brea
 
 ---
 
-## Phase 2 — Cross-Platform Backend Fixes ⬜
+## Phase 2 — Cross-Platform Backend Fixes 🔄
 
 These are pure C# changes with no UI involvement. They can be done before or in parallel with the
 Avalonia migration.
@@ -90,10 +90,10 @@ and is typically installed to a user-chosen directory (often `~/games/vintagesto
 
 Per the project brief, "Confirmation-then-permanent-delete is acceptable" on Linux.
 
-- ⬜ **2.2.1** Extract the two deletion call-sites in `MainWindow.xaml.cs` (lines ~7626 and ~7641)
+- ✅ **2.2.1** Extract the two deletion call-sites in `MainWindow.xaml.cs` (lines ~7626 and ~7641)
   into a shared helper method `DeleteFileCrossPlatform(string path)`.
-- ⬜ **2.2.2** On Windows the helper continues to use `FileSystem.DeleteFile(…, SendToRecycleBin)`.
-- ⬜ **2.2.3** On Linux the helper shows a confirmation dialog ("This will permanently delete the file.
+- ✅ **2.2.2** On Windows the helper continues to use `FileSystem.DeleteFile(…, SendToRecycleBin)`.
+- ✅ **2.2.3** On Linux the helper shows a confirmation dialog ("This will permanently delete the file.
   Continue?") and, if confirmed, calls `File.Delete(path)` or `Directory.Delete(path, recursive: true)`.
 - ⬜ **2.2.4** Confirmation dialog must be an Avalonia-compatible dialog (not WPF `MessageBox`).
 
@@ -102,9 +102,9 @@ Per the project brief, "Confirmation-then-permanent-delete is acceptable" on Lin
 `System.Threading.Mutex` works cross-platform on Linux with no changes needed.
 `WindowActivator` (user32.dll P/Invoke) is the only part that needs attention.
 
-- ⬜ **2.3.1** Guard the `WindowActivator` inner class in `App.xaml.cs` with
+- ✅ **2.3.1** Guard the `WindowActivator` inner class in `App.xaml.cs` with
   `[SupportedOSPlatform("windows")]` and wrap every call site with `if (OperatingSystem.IsWindows())`.
-- ⬜ **2.3.2** On Linux, when a second instance is detected, simply show a message and exit
+- ✅ **2.3.2** On Linux, when a second instance is detected, simply show a message and exit
   (bringing the existing window to front is not reliably possible without a display-server-specific
   solution; this is acceptable for an initial release).
 
@@ -151,9 +151,9 @@ Avalonia XAML syntax is very close to WPF but with these key differences:
 | `BitmapImage` | `Bitmap` |
 | `MessageBox` (system) | Custom dialog (Avalonia has no system MessageBox) |
 
-### 3.1 — Application Bootstrap ⬜
+### 3.1 — Application Bootstrap 🔄
 
-- ⬜ **3.1.1** Create `Program.cs` as the Avalonia entry point:
+- 🔄 **3.1.1** Create `Program.cs` as the Avalonia entry point:
   ```csharp
   AppBuilder.Configure<App>()
       .UsePlatformDetect()
