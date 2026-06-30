@@ -8,7 +8,7 @@
 ## Background & Scope
 
 Simple VS Manager is currently a Windows-only WPF application targeting `net8.0-windows`.
-The goal is to make it run natively on **Linux** (x64 and ARM64).
+The goal is to make it run natively on **Linux** (`linux-x64` only).
 macOS is explicitly **out of scope**.
 
 The biggest blocker is the UI framework: **WPF does not run on Linux**.
@@ -45,14 +45,14 @@ Goal: Make the project buildable for both `linux-x64` and `win-x64` without brea
 
 - ⬜ **1.1** Change the primary `TargetFramework` from `net8.0-windows` to `net8.0`; keep a conditional
   `net8.0-windows` TFM for WPF-specific code until the Avalonia migration is complete.
-- ⬜ **1.2** Add `linux-x64` and `linux-arm64` to the list of recognised `RuntimeIdentifier` values.
+- ⬜ **1.2** Add `linux-x64` to the list of recognised `RuntimeIdentifier` values.
 - ⬜ **1.3** Move `UseWPF`, `UseWindowsForms`, `EnableWindowsTargeting`, and `ApplicationManifest`
   into a `Condition="'$(OS)'=='Windows_NT'"` (or `IsWindows`) property group so they are
   only set on Windows builds.
 - ⬜ **1.4** Add Avalonia NuGet packages:
-  - `Avalonia` (latest stable)
+  - `Avalonia` (LTS line)
   - `Avalonia.Desktop`
-  - `Avalonia.Themes.Fluent` (or `FluentAvalonia` for a closer WPF-Fluent look)
+  - `FluentAvalonia`
   - `Avalonia.ReactiveUI` or keep `CommunityToolkit.Mvvm` (Avalonia supports both)
 - ⬜ **1.5** Keep WPF/WinForms packages conditional on Windows builds.
 - ⬜ **1.6** Verify `dotnet restore` succeeds on Linux with `--runtime linux-x64`.
@@ -69,20 +69,20 @@ Avalonia migration.
 Vintage Story on Linux stores data in `~/.config/VintagestoryData` by default
 and is typically installed to a user-chosen directory (often `~/games/vintagestory` or via Steam).
 
-- ⬜ **2.1.1** Add Linux candidates to `DataDirectoryLocator.EnumerateCandidates()`:
+- ✅ **2.1.1** Add Linux candidates to `DataDirectoryLocator.EnumerateCandidates()`:
   - `~/.config/VintagestoryData`
   - `~/.local/share/VintagestoryData`
   - `XDG_CONFIG_HOME/VintagestoryData` (fallback to `~/.config`)
-- ⬜ **2.1.2** Remove or guard the Windows-hardcoded paths (`C:\\Games` etc.) in
+- ✅ **2.1.2** Remove or guard the Windows-hardcoded paths (`C:\\Games` etc.) in
   `DataDirectoryLocator.EnumerateAdditionalWindowsRoots()` so they are only included on Windows.
-- ⬜ **2.1.3** Add Linux candidates to `GameDirectoryLocator.EnumerateDefaultInstallPaths()`:
+- ✅ **2.1.3** Add Linux candidates to `GameDirectoryLocator.EnumerateDefaultInstallPaths()`:
   - `~/.local/share/vintagestory`
   - `~/games/vintagestory`
   - `/opt/vintagestory`
   - XDG data dirs (`~/.local/share/Steam/steamapps/common/Vintage Story`)
-- ⬜ **2.1.4** Guard the Windows-hardcoded paths in `GameDirectoryLocator.EnumerateAdditionalWindowsRoots()`
+- ✅ **2.1.4** Guard the Windows-hardcoded paths in `GameDirectoryLocator.EnumerateAdditionalWindowsRoots()`
   with `OperatingSystem.IsWindows()`.
-- ⬜ **2.1.5** The `ExecutableCandidates` array in `GameDirectoryLocator` already includes `Vintagestory`
+- ✅ **2.1.5** The `ExecutableCandidates` array in `GameDirectoryLocator` already includes `Vintagestory`
   (no `.exe`) — verify this is sufficient for Linux and add a check for the shell wrapper script
   (`vintagestory.sh`) if needed.
 
@@ -166,7 +166,7 @@ Avalonia XAML syntax is very close to WPF but with these key differences:
   - Move theme loading to Avalonia `RequestedThemeVariant` / `Styles`.
   - Remove `DispatcherUnhandledException` (use Avalonia's equivalent).
   - Guard `WindowActivator` (user32 P/Invoke) with `OperatingSystem.IsWindows()`.
-- ⬜ **3.1.3** Replace `ModernWpfUI` theme with `FluentAvalonia` (or Avalonia Fluent theme).
+- ⬜ **3.1.3** Replace `ModernWpfUI` theme with `FluentAvalonia`.
   Reproduce the existing `DarkVsTheme.xaml` colour palette as an Avalonia `ResourceDictionary`.
 
 ### 3.2 — Main Window ⬜
@@ -269,7 +269,7 @@ Simplest format; required as input for all others.
       -p:IncludeNativeLibrariesForSelfExtract=true \
       --output dist/linux-x64
   ```
-  (and similarly for `linux-arm64`)
+  (target `linux-x64` only)
 - ⬜ **5.1.2** Create `packaging/linux/make-tarball.sh` that:
   - Copies the published output plus a wrapper shell script and `.desktop` file.
   - Produces `SimpleVSManager-{version}-linux-x64.tar.gz`.
@@ -317,7 +317,7 @@ Flatpak provides a sandboxed distribution format supported by most major distros
   - Finish-args: network, filesystem (home for mod/data directories), X11/Wayland.
 - ⬜ **5.3.2** Document the required `flatpak-builder` build command.
 - ⬜ **5.3.3** Decide on sandbox permissions (network for mod DB, `--filesystem=home` for mod folders).
-- ⬜ **5.3.4** Create Flatpak `metainfo.xml` (AppStream metadata) for Flathub submission.
+- ⬜ **5.3.4** Create Flatpak `metainfo.xml` (AppStream metadata) if distribution outside internal testing is needed.
 
 ### 5.4 — .deb (Debian/Ubuntu) ⬜
 
@@ -370,16 +370,14 @@ Flatpak provides a sandboxed distribution format supported by most major distros
 
 ---
 
-## Open Questions / Decisions Needed
+## Decisions Applied
 
-1. **Avalonia version**: Target the latest stable release (11.x as of writing) or LTS?
-2. **Theme library**: Pure Avalonia Fluent theme vs. FluentAvalonia vs. Material.Avalonia?
-   FluentAvalonia is closest to the current WPF Fluent look.
-3. **ARM64**: Is `linux-arm64` required for the initial release, or only `linux-x64`?
-4. **Flatpak sandbox**: Which filesystem permissions should the Flatpak expose?
-   `--filesystem=home` is simple but broad; per-directory grants are more secure but harder to configure.
-5. **Wayland**: Avalonia supports Wayland natively. Any known Wayland-specific issues to address?
-6. **AppStream / Flathub**: Is submission to Flathub in scope?
+1. **Avalonia version**: Use **LTS**.
+2. **Theme library**: Use **FluentAvalonia**.
+3. **ARM64**: **Out of scope**; target `linux-x64` only.
+4. **Flatpak sandbox**: Broad permissions are acceptable for test builds.
+5. **Wayland-specific work**: None planned.
+6. **Flathub submission**: Out of scope for now.
 
 ---
 
@@ -389,8 +387,8 @@ Flatpak provides a sandboxed distribution format supported by most major distros
 |---------|--------|-------|
 | `Avalonia` | ⬜ To add | Core framework |
 | `Avalonia.Desktop` | ⬜ To add | Provides desktop integration |
-| `Avalonia.Themes.Fluent` | ⬜ To add | Built-in Fluent theme |
-| `FluentAvalonia` | ⬜ To evaluate | Richer WinUI-style controls |
+| `Avalonia.Themes.Fluent` | ⬜ Optional | Keep only if required by selected FluentAvalonia setup |
+| `FluentAvalonia` | ✅ Selected | Preferred theme/control stack |
 | `Avalonia.Controls.ColorPicker` | ⬜ To evaluate | Replaces WinForms ColorDialog |
 | `CommunityToolkit.Mvvm` | ✅ Keep | Already cross-platform |
 | `HtmlAgilityPack` | ✅ Keep | Already cross-platform |
