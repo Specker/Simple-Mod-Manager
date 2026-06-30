@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using FluentAvalonia.UI.Controls;
+using System.Diagnostics;
 
 namespace VintageStoryModManager.Services;
 
@@ -33,8 +34,24 @@ internal static class AvaloniaConfirmationDialogService
                 return result == ContentDialogResult.Primary;
             }).GetAwaiter().GetResult();
         }
-        catch
+        catch (InvalidOperationException ex)
         {
+            Debug.WriteLine($"[AvaloniaConfirmationDialogService] Invalid operation while showing dialog: {ex}");
+            return false;
+        }
+        catch (TaskCanceledException ex)
+        {
+            Debug.WriteLine($"[AvaloniaConfirmationDialogService] Dialog task cancelled: {ex}");
+            return false;
+        }
+        catch (ObjectDisposedException ex)
+        {
+            Debug.WriteLine($"[AvaloniaConfirmationDialogService] Dialog owner disposed: {ex}");
+            return false;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[AvaloniaConfirmationDialogService] Unexpected error while showing dialog: {ex}");
             return false;
         }
     }
